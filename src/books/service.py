@@ -72,3 +72,7 @@ class BookService:
             return {
                 'message': 'Book deleted successfully',
             }
+        else:
+            return {
+                'message': 'Book not found',
+            }

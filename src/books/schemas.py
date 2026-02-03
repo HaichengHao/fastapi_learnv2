@@ -20,12 +20,12 @@ class Book(BaseModel):
 
 
 class BookCreateModel(BaseModel):
-    uid: uuid.UUID
+    # uid: uuid.UUID
     title: str
     author: str
     publisher: str
     page_count: int
-    publish_date: str
+    publish_date: datetime.date
 
 
 class Book_update(BaseModel):

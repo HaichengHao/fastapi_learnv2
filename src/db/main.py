@@ -5,10 +5,14 @@
 # important：创建引擎和session
 
 from sqlmodel import SQLModel
+from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import async_sessionmaker
+
 from config import Config
-from src.books.models import Book #important:记住一定要显式导入
-engine =   create_async_engine(
+from src.books.models import Book  # important:记住一定要显式导入
+
+engine = create_async_engine(
     url=Config.DATABASE_URL,
     echo=True,  # 调试时打开，可以看到sql语句
 
@@ -21,3 +25,11 @@ async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.create_all)  # tips:用同步的方式创建数据表
         # important:SQLModel.metadata.create_all将会扫描任何用这个SQLmodel对象创建并访问了元数据的模型
+
+
+# important:定义session
+async def get_session() -> AsyncSession:
+    AsyncSessionlocal = async_sessionmaker(engine, expire_on_commit=False,
+                                           class_=AsyncSession)  # tips:指定不需要session过期,这样即使在提交事务后session仍然可以使用
+    async with AsyncSessionlocal() as session:
+        yield session
